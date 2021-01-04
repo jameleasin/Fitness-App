@@ -1,31 +1,35 @@
-//install packages
-const express = require('express');
-const logger = require('morgan');
-const mongoose = require('mongoose');
-//set port
+  
+// REQUIREMENTS
+const express = require("express");
+const logger = require("morgan");
+const mongoose = require("mongoose");
+
+// PORT SETUP
 const PORT = process.env.PORT || 3000;
 
+// APP SETUP
 const app = express();
-
-//use logger
 app.use(logger("dev"));
-
-//parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-//use static files
 app.use(express.static("public"));
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/fittrack", {useNewUrlParser: true});
+// CONNECT TO DATABASE
+mongoose.connect(
+  process.env.MONGODB_URL || 'mongodb://localhost/andrewisfit',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  }
+);
 
-//require('./seeders/seed')
+// ROUTES
+const routes = require("./routes");
+app.use(routes);
 
-//use routes
-require('./routes/api-routes')(app)
-require('./routes/html-routes')(app)
-
-
+// SERVER SETUP
 app.listen(PORT, () => {
-    console.log(`App running on port ${PORT}..`);
-})
+  console.log(`App running on port ${PORT}!`);
+});
